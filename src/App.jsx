@@ -118,6 +118,12 @@ function App() {
     setWatchedMovie((prevWatched) => [...prevWatched, movie]);
   };
 
+  const deleteWatchedMovieHandler = (id) => {
+    setWatchedMovie((watched) =>
+      watched.filter((movie) => movie.imdbID !== id)
+    );
+  };
+
   return (
     <>
       <div className=" min-h-screen flex flex-col  ">
@@ -147,7 +153,10 @@ function App() {
                 watchedMovie={watchedMovie}
               />
             ) : (
-              <WatchedMoviesList watchedMovies={watchedMovie}>
+              <WatchedMoviesList
+                watchedMovies={watchedMovie}
+                onDeleteMovie={deleteWatchedMovieHandler}
+              >
                 <WatchedSummary watchedMovies={watchedMovie} />
               </WatchedMoviesList>
             )}
