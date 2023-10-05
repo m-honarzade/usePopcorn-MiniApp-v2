@@ -12,6 +12,7 @@ import Navbar from "./layouts/Navbar";
 import Loading from "./components/Loading";
 
 import ErrorMessage from "./components/ErrorMessage";
+import MovieDetails from "./components/MovieDetails";
 
 // const tempMovieData = [
 //   {
@@ -61,15 +62,17 @@ const tempWatchedData = [
 ];
 
 const KEY = "7418308e";
-const tempQuery = "interstellar";
+// const tempQuery = "interstellar";
 
 // ***************************************************************
 
 function App() {
   const [movies, setMovies] = useState([]);
+  const [watchedMovie, setWatchedMovie] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [query, setQuery] = useState("");
+  const [selectedId, setSelectedId] = useState(null);
 
   useEffect(() => {
     const fetchMovies = async () => {
@@ -103,6 +106,18 @@ function App() {
     fetchMovies();
   }, [query]);
 
+  const closeSelectedMovieHandler = () => {
+    setSelectedId(null);
+  };
+
+  const selectedIdHandler = (id) => {
+    setSelectedId((selectedId) => (id === selectedId ? null : id));
+  };
+
+  const watchedMovieHandler = (movie) => {
+    setWatchedMovie((prevWatched) => [...prevWatched, movie]);
+  };
+
   return (
     <>
       <div className=" min-h-screen flex flex-col  ">
@@ -117,13 +132,25 @@ function App() {
         <Main>
           <Box>
             {isLoading && <Loading />}
-            {!isLoading && !error && <MoviesList movies={movies} />}
+            {!isLoading && !error && (
+              <MoviesList movies={movies} onSelectedId={selectedIdHandler} />
+            )}
             {error && <ErrorMessage message={error} />}
           </Box>
           <Box>
-            <WatchedMoviesList watchedMovies={tempWatchedData}>
-              <WatchedSummary watchedMovies={tempWatchedData} />
-            </WatchedMoviesList>
+            {selectedId ? (
+              <MovieDetails
+                KEY={KEY}
+                selectedId={selectedId}
+                onCloseHandler={closeSelectedMovieHandler}
+                onAddWatchedMovie={watchedMovieHandler}
+                watchedMovie={watchedMovie}
+              />
+            ) : (
+              <WatchedMoviesList watchedMovies={watchedMovie}>
+                <WatchedSummary watchedMovies={watchedMovie} />
+              </WatchedMoviesList>
+            )}
           </Box>
         </Main>
       </div>
