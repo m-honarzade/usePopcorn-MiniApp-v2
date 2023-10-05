@@ -46,6 +46,14 @@ const MovieDetails = ({
     getMovieDetails();
   }, [selectedId]);
 
+  useEffect(() => {
+    if (!title) return;
+    document.title = `Movie | ${title}`;
+    return () => {
+      document.title = "usePopcorn";
+    };
+  }, [title]);
+
   const addHandler = () => {
     const newWatchedMovie = {
       imdbID: selectedId,
