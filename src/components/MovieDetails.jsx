@@ -54,6 +54,19 @@ const MovieDetails = ({
     };
   }, [title]);
 
+  useEffect(() => {
+    const callBack = (e) => {
+      if (e.code === "Escape") {
+        onCloseHandler();
+      }
+    };
+
+    document.addEventListener("keydown", callBack);
+    return () => {
+      document.removeEventListener("keydown", callBack);
+    };
+  }, [onCloseHandler]);
+
   const addHandler = () => {
     const newWatchedMovie = {
       imdbID: selectedId,

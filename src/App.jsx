@@ -105,7 +105,7 @@ function App() {
       setError("");
       return;
     }
-
+    closeSelectedMovieHandler();
     fetchMovies();
     return () => {
       controller.abort();
