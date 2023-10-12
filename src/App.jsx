@@ -13,7 +13,8 @@ import Loading from "./components/Loading";
 
 import ErrorMessage from "./components/ErrorMessage";
 import MovieDetails from "./components/MovieDetails";
-import useMovies from "./components/useMovies";
+import useMovies from "./hooks/useMovies";
+import useLocalStorageState from "./hooks/useLocalStorageState";
 
 // const tempMovieData = [
 //   {
@@ -39,28 +40,28 @@ import useMovies from "./components/useMovies";
 //   },
 // ];
 
-const tempWatchedData = [
-  {
-    imdbID: "tt1375666",
-    Title: "Inception",
-    Year: "2010",
-    Poster:
-      "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_SX300.jpg",
-    runtime: 148,
-    imdbRating: 8.8,
-    userRating: 10,
-  },
-  {
-    imdbID: "tt0088763",
-    Title: "Back to the Future",
-    Year: "1985",
-    Poster:
-      "https://m.media-amazon.com/images/M/MV5BZmU0M2Y1OGUtZjIxNi00ZjBkLTg1MjgtOWIyNThiZWIwYjRiXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_SX300.jpg",
-    runtime: 116,
-    imdbRating: 8.5,
-    userRating: 9,
-  },
-];
+// const tempWatchedData = [
+//   {
+//     imdbID: "tt1375666",
+//     Title: "Inception",
+//     Year: "2010",
+//     Poster:
+//       "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_SX300.jpg",
+//     runtime: 148,
+//     imdbRating: 8.8,
+//     userRating: 10,
+//   },
+//   {
+//     imdbID: "tt0088763",
+//     Title: "Back to the Future",
+//     Year: "1985",
+//     Poster:
+//       "https://m.media-amazon.com/images/M/MV5BZmU0M2Y1OGUtZjIxNi00ZjBkLTg1MjgtOWIyNThiZWIwYjRiXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_SX300.jpg",
+//     runtime: 116,
+//     imdbRating: 8.5,
+//     userRating: 9,
+//   },
+// ];
 
 // const tempQuery = "interstellar";
 const KEY = "7418308e";
@@ -76,10 +77,8 @@ function App() {
   const [selectedId, setSelectedId] = useState(null);
 
   const { movies, isLoading, error } = useMovies(query, KEY);
-  const [watchedMovie, setWatchedMovie] = useState(() => {
-    const storeValue = localStorage.getItem("watched");
-    return JSON.parse(storeValue);
-  });
+
+  const [watchedMovie, setWatchedMovie] = useLocalStorageState([], "watched");
 
   const closeSelectedMovieHandler = () => {
     setSelectedId(null);
@@ -137,9 +136,9 @@ function App() {
   //   };
   // }, [query]);
 
-  useEffect(() => {
-    localStorage.setItem("watched", JSON.stringify(watchedMovie));
-  }, [watchedMovie]);
+  // useEffect(() => {
+  //   localStorage.setItem("watched", JSON.stringify(watchedMovie));
+  // }, [watchedMovie]);
 
   return (
     <>
