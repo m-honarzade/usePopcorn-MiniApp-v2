@@ -13,6 +13,7 @@ import Loading from "./components/Loading";
 
 import ErrorMessage from "./components/ErrorMessage";
 import MovieDetails from "./components/MovieDetails";
+import useMovies from "./components/useMovies";
 
 // const tempMovieData = [
 //   {
@@ -61,18 +62,20 @@ const tempWatchedData = [
   },
 ];
 
-const KEY = "7418308e";
 // const tempQuery = "interstellar";
+const KEY = "7418308e";
 
 // ***************************************************************
 
 function App() {
-  const [movies, setMovies] = useState([]);
+  // const [movies, setMovies] = useState([]);
   // const [watchedMovie, setWatchedMovie] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
+  // const [isLoading, setIsLoading] = useState(false);
+  // const [error, setError] = useState("");
   const [query, setQuery] = useState("");
   const [selectedId, setSelectedId] = useState(null);
+
+  const { movies, isLoading, error } = useMovies(query, KEY);
   const [watchedMovie, setWatchedMovie] = useState(() => {
     const storeValue = localStorage.getItem("watched");
     return JSON.parse(storeValue);
@@ -81,7 +84,6 @@ function App() {
   const closeSelectedMovieHandler = () => {
     setSelectedId(null);
   };
-
   const selectedIdHandler = (id) => {
     setSelectedId((selectedId) => (id === selectedId ? null : id));
   };
@@ -97,43 +99,43 @@ function App() {
     );
   };
 
-  useEffect(() => {
-    const controller = new AbortController();
-    const fetchMovies = async () => {
-      try {
-        setIsLoading(true);
-        setError("");
-        const res = await fetch(
-          `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`,
-          { signal: controller.signal }
-        );
+  // useEffect(() => {
+  //   const controller = new AbortController();
+  //   const fetchMovies = async () => {
+  //     try {
+  //       setIsLoading(true);
+  //       setError("");
+  //       const res = await fetch(
+  //         `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`,
+  //         { signal: controller.signal }
+  //       );
 
-        if (!res.ok)
-          throw new Error("Something went wrong with fetching movies!");
+  //       if (!res.ok)
+  //         throw new Error("Something went wrong with fetching movies!");
 
-        const data = await res.json();
-        console.log(data);
-        if (data.Response === "False") throw new Error("Movie not found!");
+  //       const data = await res.json();
+  //       console.log(data);
+  //       if (data.Response === "False") throw new Error("Movie not found!");
 
-        setMovies(data.Search);
-        setError("");
-      } catch (err) {
-        if (err.name !== "AbortError") setError(err.message);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    if (query.length < 3) {
-      setMovies([]);
-      setError("");
-      return;
-    }
-    closeSelectedMovieHandler();
-    fetchMovies();
-    return () => {
-      controller.abort();
-    };
-  }, [query]);
+  //       setMovies(data.Search);
+  //       setError("");
+  //     } catch (err) {
+  //       if (err.name !== "AbortError") setError(err.message);
+  //     } finally {
+  //       setIsLoading(false);
+  //     }
+  //   };
+  //   if (query.length < 3) {
+  //     setMovies([]);
+  //     setError("");
+  //     return;
+  //   }
+  //   closeSelectedMovieHandler();
+  //   fetchMovies();
+  //   return () => {
+  //     controller.abort();
+  //   };
+  // }, [query]);
 
   useEffect(() => {
     localStorage.setItem("watched", JSON.stringify(watchedMovie));
@@ -146,7 +148,7 @@ function App() {
           <Navbar>
             <Logo />
             <Search query={query} setQuery={setQuery} />
-            <NumResults />
+            <NumResults movies={movies} />
           </Navbar>
         </div>
 
